@@ -9,8 +9,12 @@ class ParkingLot {
     entranceGate = document.getElementById('entrance-gate');
     exitGate = document.getElementById('exit-gate');
 
-    constructor(calculatePrice) {
-        this.calculatePrice = calculatePrice;
+    constructor(priceStrategy) {
+        this.priceStrategy = priceStrategy;
+    }
+
+    getDescription() {
+        return this.priceStrategy.getDescription();
     }
 
     checkin(licensePlate) {
@@ -27,8 +31,10 @@ class ParkingLot {
         if (checkinTime == undefined || checkinTime.constructor != Date) {
             throw new Error(`${licensePlate} holder ikke på pladsen!`);
         } else {
-            this.checkedInCars[licensePlate] =
-                this.calculatePrice(checkinTime, new Date());
+            const checkoutTime = new Date();
+
+            const price = this.priceStrategy.calculatePrice(checkinTime, checkoutTime);
+            this.checkedInCars[licensePlate] = price;
             return this.checkedInCars[licensePlate];
         }
     }
